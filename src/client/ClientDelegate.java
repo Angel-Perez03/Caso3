@@ -24,10 +24,19 @@ import java.util.Scanner;
 public class ClientDelegate implements Runnable {
     private final String serverIp;
     private final int serverPort;
+    private final int serviceId;
+
+    public ClientDelegate(String serverIp, int serverPort, int serviceId) {
+        this.serverIp = serverIp;
+        this.serverPort = serverPort;   
+        this.serviceId = serviceId;
+        
+    }
 
     public ClientDelegate(String serverIp, int serverPort) {
         this.serverIp = serverIp;
         this.serverPort = serverPort;
+        this.serviceId = -1; // Default value for serviceId
     }
 
     @Override
@@ -99,9 +108,14 @@ public class ClientDelegate implements Runnable {
                 System.out.println(new String(tablePlain, "UTF-8"));
 
                 // Paso 7: pedir al usuario
-                Scanner sc = new Scanner(System.in);
-                System.out.print("Ingresa ID de servicio: ");
-                int svcId = sc.nextInt();
+                int svcId;
+                if (serviceId != -1) {
+                    svcId = serviceId;
+                } else {
+                    System.out.print("Ingresa ID de servicio: ");
+                    Scanner sc = new Scanner(System.in);
+                    svcId = sc.nextInt();
+                }
 
                 // Paso 8: enviar solicitud cifrada + HMAC
                 String request = svcId + "," + sock.getLocalAddress().getHostAddress();
