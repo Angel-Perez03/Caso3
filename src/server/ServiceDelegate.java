@@ -150,12 +150,16 @@ public class ServiceDelegate implements Runnable {
             dos.writeUTF("OK");
             System.out.println("[DEBUG][Srv] Response + HMAC + OK sent");
 
-            // Mostrar promedios simples (ms)
-            long avgSignMs      = signTimes.stream().mapToLong(Long::longValue).sum() / signTimes.size() / 1_000_000;
-            long avgEncTableMs  = encryptTableTimes.stream().mapToLong(Long::longValue).sum() / encryptTableTimes.size() / 1_000_000;
-            long avgVerifyMs    = verifyReqTimes.stream().mapToLong(Long::longValue).sum() / verifyReqTimes.size() / 1_000_000;
-            System.out.printf("[BENCH] avgSign=%dms, avgEncTable=%dms, avgVerifyReq=%dms%n",
-                              avgSignMs, avgEncTableMs, avgVerifyMs);
+            // Mostrar promedios simples (ms con decimales)
+            double avgSignMs     = signTimes.stream().mapToLong(Long::longValue).average().orElse(0.0) / 1_000_000.0;
+            double avgEncTableMs = encryptTableTimes.stream().mapToLong(Long::longValue).average().orElse(0.0) / 1_000_000.0;
+            double avgVerifyMs   = verifyReqTimes.stream().mapToLong(Long::longValue).average().orElse(0.0) / 1_000_000.0;
+
+            System.out.printf(
+                "[BENCH] avgSign=%.3f ms, avgEncTable=%.3f ms, avgVerifyReq=%.3f ms%n",
+                avgSignMs, avgEncTableMs, avgVerifyMs
+            );
+
 
         } catch (Exception e) {
             e.printStackTrace();
